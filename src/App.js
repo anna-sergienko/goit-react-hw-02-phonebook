@@ -1,25 +1,69 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import { nanoid } from "nanoid";
+import ContactForm from "./components/ContactForm";
+import ContactList from "./components/ContactList";
+import Filter from "./components/Filter";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component{
+
+  state = {
+  contacts: [
+    {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+    {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+    {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+    {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+  ],
+  filter: '',
+  
+}
+  
+
+  formSubmitHandler = ({ name, number }) => {
+    const nameToLowerCase = name.toLowerCase();
+    const filterName = this.state.contacts.find(contact =>
+      contact.name.toLowerCase() === nameToLowerCase,
+    );
+
+    if (filterName) {
+      return alert(`${name} is already in contacts.`);
+    }
+
+    this.setState(({ contacts }) => ({
+      contacts: [{name, number, id: nanoid(), ...contacts}],
+    }))
+  }
+  
+  getExsistContacts = () => {
+    const { filter, contacts } = this.state;
+    const generalFilter = filter.toLowerCase();
+    return contacts.filter(contact => contact.name.toLowerCase().includes(generalFilter),
+    )}
+
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId)
+    }));
+  };
+
+   filterChange = e => {
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: value })
+  };
+
+  render(){
+    const  { filter } = this.state;
+    return (
+      <div>
+      <h1>Phonebook</h1>
+        <ContactForm onSubmit={this.formSubmitHandler} />
+        <h1>Contacts</h1>
+        <Filter value={filter} onChange={this.filterChange}/>
+        <ContactList contacts={this.getExsistContacts()} onDelContact={this.deleteContact} />
+      </div>
+    );
+   
+  }
 }
 
 export default App;
