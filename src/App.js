@@ -17,7 +17,9 @@ class App extends Component{
   filter: '',
   
 }
-  
+
+
+
 
   formSubmitHandler = ({ name, number }) => {
     const nameToLowerCase = name.toLowerCase();
@@ -30,26 +32,31 @@ class App extends Component{
     }
 
     this.setState(({ contacts }) => ({
-      contacts: [{name, number, id: nanoid(), ...contacts}],
+      contacts: [{name, number, id: nanoid()}, ...contacts],
     }))
   }
   
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId)
+    }));
+  };
+  
+
+
+  filterChange = e => {
+    const { name, value } = e.currentTarget;
+    this.setState({ [name]: value })
+  };
+
   getExsistContacts = () => {
     const { filter, contacts } = this.state;
     const generalFilter = filter.toLowerCase();
     return contacts.filter(contact => contact.name.toLowerCase().includes(generalFilter),
     )}
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId)
-    }));
-  };
-
-   filterChange = e => {
-    const { name, value } = e.currentTarget;
-    this.setState({ [name]: value })
-  };
+ 
+  
 
   render(){
     const  { filter } = this.state;
